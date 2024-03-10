@@ -4,6 +4,7 @@
  */
 package com.mycompany.api.endpoint;
 
+import com.mycompany.api.annotation.NoSessionRequired;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -31,6 +32,7 @@ public class UserEndpoint {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @NoSessionRequired
     public Response getJson() {
 
         String userJson = "{\"name\":\"user\"}";

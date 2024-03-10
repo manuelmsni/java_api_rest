@@ -11,7 +11,7 @@ import javax.ws.rs.core.Application;
  *
  * @author manuelmsni
  */
-@javax.ws.rs.ApplicationPath("") // Base entry point
+@javax.ws.rs.ApplicationPath("api") // Base entry point
 public class ApplicationSetup extends Application {
 
     @Override

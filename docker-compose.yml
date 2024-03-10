@@ -25,14 +25,14 @@ services:
       - ./init-mongodb-db.js:/docker-entrypoint-initdb.d/init-mongodb-db.js
 
   webapp:
-    image: tomcat:latest
+    image: tomcat:9-jdk11-openjdk
     depends_on:
       - mariadb
       - mongodb
     ports:
       - "6003:8080"
     volumes:
-      - ./target/myapp.war:/usr/local/tomcat/webapps/api-1.0-SNAPSHOT.war
+      - ./target/api-1.0-SNAPSHOT.war:/usr/local/tomcat/webapps/api-1.0-SNAPSHOT.war
 
 volumes:
   mongodb-data:
