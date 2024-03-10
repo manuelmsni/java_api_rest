@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  mariadb:
+    image: mariadb:latest
+    volumes:
+      - mariadb-data:/data/mariadb-data
+      - ./init-mariadb-db.sql:/docker-entrypoint-initdb.d/init-mariadb-db.sql
+    environment:
+      MARIADB_ROOT_PASSWORD: docker
+      MARIADB_DATABASE: api
+      MARIADB_USER: admin
+      MARIADB_PASSWORD: docker
+    ports:
+      - "6001:3306"
+
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: docker
+    ports:
+      - "6002:27017"
+    volumes:
+      - mongodb-data:/data/mongodb-db
+      - ./init-mongodb-db.js:/docker-entrypoint-initdb.d/init-mongodb-db.js
+
+  webapp:
+    image: tomcat:latest
+    depends_on:
+      - mariadb
+      - mongodb
+    ports:
+      - "6003:8080"
+    volumes:
+      - ./target/myapp.war:/usr/local/tomcat/webapps/api-1.0-SNAPSHOT.war
+
+volumes:
+  mongodb-data:
+  mariadb-data:
