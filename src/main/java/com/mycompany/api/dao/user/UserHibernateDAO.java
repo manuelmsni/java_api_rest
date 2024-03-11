@@ -12,6 +12,8 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 
@@ -32,18 +34,16 @@ public class UserHibernateDAO implements UserDAO{
     }
 
     @Override
-    public User findByEmailAndPassword(String email, String password) {
+    public User findByEmailOrUsernameAndPassword(String emailOrUsername, String password) {
         EntityManager em = emf.createEntityManager();
-        
         try {
-            TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.email = :email AND u.password = :password", User.class);
-            query.setParameter("email", email);
+            TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE (u.email = :emailOrUsername OR u.username = :emailOrUsername) AND u.password = :password", User.class);
+            query.setParameter("emailOrUsername", emailOrUsername);
             query.setParameter("password", password);
             return query.getSingleResult();
         } catch (Exception e) {
-            
+            Logger.getAnonymousLogger().log(Level.SEVERE, e.getMessage());
             // TODO : Gestionar excepción
-            
             return null;
         } finally {
             em.close();
@@ -101,7 +101,7 @@ public class UserHibernateDAO implements UserDAO{
             if (existingUser == null) {
                 throw new Exception("Usuario no encontrado");
             }
-            existingUser.setName(user.getName());
+            existingUser.setUsername(user.getUsername());
             existingUser.setEmail(user.getEmail());
             
             // Asegúrate de hacer hash de la contraseña antes de llamar a updateUser si decides actualizar la contraseña aquí

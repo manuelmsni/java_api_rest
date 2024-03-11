@@ -18,7 +18,7 @@ public interface UserDAO {
      */
     public User getUser(int id);
     
-    public User findByEmailAndPassword(String email, String password);
+    public User findByEmailOrUsernameAndPassword(String email, String password);
     
     public User findByEmail(String email);
     

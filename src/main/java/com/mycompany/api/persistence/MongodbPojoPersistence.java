@@ -28,8 +28,10 @@ import org.bson.types.ObjectId;
  */
 public class MongodbPojoPersistence {
     
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "docker";
     private static final String HOST = "mongodb";
-    private static final  String DB_URI = "mongodb://" + HOST + ":" + Constants.MONGODB_PORT;
+    private static final String DB_URI = "mongodb://" + USERNAME + ":" + PASSWORD + "@" + HOST + ":" + Constants.MONGODB_PORT;
     
     private static MongodbPojoPersistence instance;
     

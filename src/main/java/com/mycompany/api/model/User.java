@@ -4,19 +4,40 @@
  */
 package com.mycompany.api.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 /**
  *
  * @author manuelmsni
  */
+@Entity
+@Table(name = "api_user")
 public class User {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String name;
+    
+    @Column(name = "username")
+    private String username;
+    
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
+    
+    @Column(name = "password", nullable = false)
     private String password;
     
-    public User(int id, String name, String email, String password) {
+    public User() {
+    }
+    
+    public User(int id, String username, String email, String password) {
         this.id = id;
-        this.name = name;
+        this.username = username;
         this.email = email;
         this.password = password;
     }
@@ -29,12 +50,12 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {

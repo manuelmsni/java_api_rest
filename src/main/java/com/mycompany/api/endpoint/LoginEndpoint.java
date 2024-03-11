@@ -24,7 +24,6 @@ import com.mycompany.api.util.Hasher;
  * @author manuelmsni
  */
 @Path("login")
-@NoSessionRequired
 public class LoginEndpoint {
 
     private UserDAO userDAO = UserHibernateDAO.getInstance();
@@ -32,10 +31,11 @@ public class LoginEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @NoSessionRequired
     public Response loginUser(User credentials) {
         try {
             String password = Hasher.sha256(credentials.getPassword());
-            User user = userDAO.findByEmailAndPassword(credentials.getEmail(), password);
+            User user = userDAO.findByEmailOrUsernameAndPassword(credentials.getEmail(), password);
             if (user != null) {
                 String token = JWTManager.generateToken(user);
                 return Response.ok("{\"token\":\"" + token + "\"}").build();
