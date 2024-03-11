@@ -70,13 +70,21 @@
             <version>3.3.2</version>
         </dependency>
         
+        <!-- Jakarta Persistence API -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        
         <!-- Hibernate -->
         
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>6.4.3.Final</version>
-            <type>pom</type>
+            <version>4.2.21.Final</version>
+            <type>jar</type>
         </dependency>
         
         <!--  -->

@@ -17,4 +17,12 @@ public interface UserDAO {
      * @return El usuario con dicha id
      */
     public User getUser(int id);
+    
+    public User findByEmailAndPassword(String email, String password);
+    
+    public User findByEmail(String email);
+    
+    public void insertUser(User user);
+
+    public void updateUser(User user);
 }

@@ -12,6 +12,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
+import com.mycompany.api.util.Constants;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,16 +22,14 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.types.ObjectId;
 
-
 /**
  *
  * @author manuelmsni
  */
 public class MongodbPojoPersistence {
-       
-    private static final String HOST = "localhost";
-    private static final String PORT = "57017";
-    private static final  String DB_URI = "mongodb://" + HOST + ":" + PORT;
+    
+    private static final String HOST = "mongodb";
+    private static final  String DB_URI = "mongodb://" + HOST + ":" + Constants.MONGODB_PORT;
     
     private static MongodbPojoPersistence instance;
     
@@ -56,7 +55,7 @@ public class MongodbPojoPersistence {
         return client.getDatabase(dbname).withCodecRegistry(codec);
     }
     
-    private static <T> MongoCollection<T> getCollection(String database, String name, Class<T> type){
+    public static <T> MongoCollection<T> getCollection(String database, String name, Class<T> type){
         return getInstance().getDatabase(database).getCollection(name, type);
     }
     

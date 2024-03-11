@@ -6,7 +6,7 @@ package com.mycompany.api.middleware;
 
 import javax.ws.rs.container.ResourceInfo;
 import com.mycompany.api.annotation.NoSessionRequired;
-import com.mycompany.api.dao.user.HibernateUserDAO;
+import com.mycompany.api.dao.user.UserHibernateDAO;
 import com.mycompany.api.model.User;
 import com.mycompany.api.util.JWTManager;
 import io.jsonwebtoken.Claims;
@@ -65,7 +65,7 @@ public class SessionMiddleware implements ContainerRequestFilter {
         
         int userId = Integer.parseInt(claims.getSubject());
                 
-        User user = HibernateUserDAO.getInstance().getUser(userId);
+        User user = UserHibernateDAO.getInstance().getUser(userId);
         
         return user;
     }

@@ -11,4 +11,6 @@ package com.mycompany.api.util;
 public class Constants {
     public static final String CONFIG_FILE = "app.conf";
     public static final long SESSION_VALIDITY = 24 * 60 * 60 * 1000; // 24h in milliseconds
+    
+    public static final int MONGODB_PORT = 27017;
 }

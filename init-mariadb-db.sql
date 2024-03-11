@@ -8,8 +8,7 @@ CREATE TABLE api_user (
     password VARCHAR(255) UNIQUE NOT NULL
 );
 
-CREATE TABLE api_security (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    jwt_secret VARCHAR(255) NOT NULL,
-    jwt_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+INSERT INTO api_user (username, email, password) VALUES 
+('user1', 'user1@example.com', 'password1'),
+('user2', 'user2@example.com', 'password2'),
+('user3', 'user3@example.com', 'password3');
