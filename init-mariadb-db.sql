@@ -5,7 +5,7 @@ CREATE TABLE api_user (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) UNIQUE NOT NULL
+    password VARCHAR(255) NOT NULL
 );
 
 INSERT INTO api_user (username, email, password) VALUES 

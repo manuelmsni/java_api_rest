@@ -27,7 +27,7 @@ public class JWTManager {
         return Jwts.builder()
                 .setSubject(String.valueOf(user.getId())) // Encode the user ID as the "subject" of the token
                 .setExpiration(expiration)
-                .signWith(getSecret(), SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256,getSecret())
                 .compact();
     }
 
@@ -44,9 +44,9 @@ public class JWTManager {
         return Jwts.parserBuilder().setSigningKey(getSecret()).build().parseClaimsJws(jwtToken).getBody();
     }
     
-    private static Key getSecret(){
+    private static String getSecret(){
         // TODO : Implement a secure method to get the secret
-        return Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
+        return Hasher.sha256("defaultsecret");
     }
     
     public static User getUserFromToken(@HeaderParam("Authorization") String authToken) {

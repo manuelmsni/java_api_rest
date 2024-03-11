@@ -33,7 +33,7 @@ public class RegisterEndpoint {
     public Response registerUser(User user) {
         try {
             
-            if (userDAO.findByEmail(user.getEmail()) != null) { // Verifica si el usuario ya existe
+            if (userDAO.findByEmail(user.getEmail()) != null) {
                 return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"El correo electrónico ya está en uso.\"}").build();
             }
             

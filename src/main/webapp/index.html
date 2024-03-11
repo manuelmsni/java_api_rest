@@ -4,33 +4,42 @@
         <title>/api-1.0-SNAPSHOT</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <style type="text/css">
+            :root{
+                --main-width: 1100px;
+            }
             body {
                 margin: 0;
+                font-family: system-ui;
             }
-            h1 {
+            h1, h2 {
                 margin: 0;
+            }
+            a{
+                text-decoration: underline;
+                color: cadetblue;
             }
             a:hover {
                 cursor: pointer;
+                color: darkcyan;
             }
             #login, #register {
                 display: none;
                 margin: auto;
                 z-index: 1000;
                 position: absolute;
+                top: 0;
+                left: 0;
                 justify-content: center;
                 height: 100%;
                 align-items: center;
                 width: 100%;
                 flex-direction: column;
-                background-color: #000000c9;
+                background-color: #363636;
             }
             #login form, #register form {
                 display: flex;
                 padding: 2rem;
                 background-color: white;
-                box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
-                border-radius: 15px;
                 row-gap: 1rem;
                 flex-direction: column;
             }
@@ -41,163 +50,139 @@
             #login button, #register button {
                 margin-top: 0.5rem;
             }
+            .border{
+                box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+                border-radius: 15px;
+            }
+            .container{
+                max-width: var(--main-width);
+                margin: auto;
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+                box-sizing: border-box;
+                overflow: hidden;
+            }
+            .inline-list {
+                list-style: none;
+            }
+            .inline-list li{
+                display: inline;
+            }
+            @media screen and (max-width: calc(1100px + 2rem)) {
+                .container{
+                    margin-left: 1rem;
+                    margin-right: 1rem;
+                }
+            }
             
         </style>
     </head>
     <body>
         <script>
             var baseURL = "http://localhost:6003/api-1.0-SNAPSHOT/api/";
-            // Función para manejar el envío del formulario
             async function handleLogin(event) {
-                event.preventDefault(); // Evita el envío estándar del formulario
-
-                // Obtiene los valores de los campos del formulario
+                event.preventDefault();
                 const username = document.getElementById('username').value;
                 const password = document.getElementById('password').value;
-
-                // Define los datos a enviar en formato JSON
                 const data = {email: username, password: password};
-
                 try {
-                    // Realiza la solicitud a la API
                     const response = await fetch(baseURL + 'login', {
                         method: 'POST', // Método HTTP
                         headers: {
-                            'Content-Type': 'application/json', // Indica el tipo de contenido que se está enviando
+                            'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(data), // Convierte los datos a una cadena JSON
+                        body: JSON.stringify(data),
                     });
-
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-
-                    // Procesa la respuesta JSON, que se espera contenga el JWT
                     const {jwt} = await response.json();
-
-                    // Aquí puedes usar el JWT como necesites, por ejemplo, guardarlo en localStorage
                     console.log('JWT recibido:', jwt);
                     localStorage.setItem('jwt', jwt);
-
-                    // Oculta el formulario de inicio de sesión después de un inicio de sesión exitoso
+                    getUserData();
                     login(false);
                 } catch (error) {
                     console.error('Error al realizar la solicitud:', error);
-                    // Aquí puedes manejar errores de inicio de sesión, como mostrar mensajes al usuario
                 }
             }
             async function fetchWithJWT(endpoint, method = 'GET', body = null) {
                 var url = baseURL + endpoint;
-                const jwt = localStorage.getItem('jwt'); // Obtiene el JWT almacenado
-
-                // Verifica si el JWT existe
+                const jwt = localStorage.getItem('jwt');
                 if (!jwt) {
-                    // Muestra el formulario de inicio de sesión si no existe un JWT
                     login(true);
                     throw new Error('No JWT found, showing login form.');
                 }
-
-                // Prepara las opciones de la solicitud
                 const options = {
                     method: method,
                     headers: {
-                        'Authorization': `Bearer ${jwt}`, // Usa el JWT en la cabecera Authorization
+                        'Authorization': `Bearer ${jwt}`,
                         'Content-Type': 'application/json',
                     },
                 };
-
-                // Añade el cuerpo a la solicitud si es necesario y no es una solicitud GET
                 if (body && method !== 'GET') {
                     options.body = JSON.stringify(body);
                 }
-
                 try {
                     const response = await fetch(url, options);
-
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-
-                    // Supone que la respuesta es JSON; ajusta según sea necesario
                     return await response.json();
                 } catch (error) {
                     console.error('Error al realizar la solicitud:', error);
-                    throw error; // O maneja el error según lo necesites
+                    throw error;
                 }
             }
             async function fetchWithoutJWT(endpoint, method = 'GET', body = null) {
                 var url = baseURL + endpoint;
-                // Prepara las opciones de la solicitud
                 const options = {
                     method: method,
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 };
-
-                // Añade el cuerpo a la solicitud si es necesario y no es una solicitud GET
                 if (body && method !== 'GET') {
                     options.body = JSON.stringify(body);
                 }
-
                 try {
                     const response = await fetch(url, options);
-
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-
-                    // Supone que la respuesta es JSON; ajusta según sea necesario
                     return await response.json();
                 } catch (error) {
                     console.error('Error al realizar la solicitud:', error);
-                    throw error; // O maneja el error según lo necesites
+                    throw error;
                 }
             }
             async function handleRegister(event) {
-                event.preventDefault(); // Evita el envío estándar del formulario
-
+                event.preventDefault(); 
                 const username = document.getElementById('reg_username').value;
                 const email = document.getElementById('reg_email').value;
                 const password = document.getElementById('reg_password').value;
                 const repeatPassword = document.getElementById('repeat_password').value;
-
-                // Validación de las contraseñas ingresadas
                 if (password !== repeatPassword) {
                     alert('Las contraseñas no coinciden.');
-                    return; // Detiene la ejecución si las contraseñas no coinciden
+                    return;
                 }
-
                 const data = {username: username, email: email, password: password};
-
                 try {
-                    // Realiza la solicitud a la API
                     const response = await fetch(baseURL + 'register', {
-                        method: 'POST', // Método HTTP
+                        method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json', // Indica el tipo de contenido que se está enviando
+                            'Content-Type': 'application/json', 
                         },
-                        body: JSON.stringify(data), // Convierte los datos a una cadena JSON
+                        body: JSON.stringify(data),
                     });
-
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-
-                    // Procesa la respuesta JSON, que se espera contenga algún tipo de confirmación o el JWT directamente
                     const responseData = await response.json();
-
-                    // Aquí puedes manejar la respuesta de la API, por ejemplo, mostrando un mensaje de éxito o redireccionando al usuario
                     console.log('Registro exitoso:', responseData);
-                    // Opcional: redireccionar al usuario o mostrar un mensaje de éxito
-                    alert('Registro exitoso. Por favor, inicia sesión.');
-
-                    // Oculta el formulario de registro y muestra el de inicio de sesión
                     login(true);
                     register(false);
                 } catch (error) {
                     console.error('Error al realizar la solicitud de registro:', error);
-                    // Aquí puedes manejar errores de registro, como mostrar mensajes al usuario
                     alert('Error en el registro. Por favor, intenta de nuevo.');
                 }
             }
@@ -206,6 +191,8 @@
                     document.getElementById('register').style.display = 'flex';
                 } else {
                     document.getElementById('register').style.display = 'none';
+                    document.getElementById('reg_password').value = "";
+                    document.getElementById('repeat_password').value = "";
                 }
             }
             function login(bool){
@@ -213,28 +200,25 @@
                     document.getElementById('login').style.display = 'flex';
                 } else {
                     document.getElementById('login').style.display = 'none';
+                    document.getElementById('password').value = "";
                 }
             }
             async function load() {
-                // Intenta obtener el JWT del localStorage
                 const jwt = localStorage.getItem('jwt');
-
-                // Verifica si el JWT no existe o está vacío
                 if (!jwt) {
-                    // Muestra el formulario de inicio de sesión si no hay JWT
                     login(true);
                 } else {
-                    // Si el JWT existe, verifica su validez con el servidor
                     try {
                         const response = await fetch(baseURL + 'session', {
                             method: 'GET',
                             headers: {
-                                'Authorization': `Bearer ${jwt}`, // Usa el JWT en la cabecera Authorization
+                                'Authorization': `Bearer ${jwt}`,
                             },
                         });
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
+                        getUserData();
                         login(false);
                     } catch (error) {
                         console.error('Error al verificar el token:', error);
@@ -242,13 +226,28 @@
                     }
                 }
             }
+            async function getUserData(){
+                try {
+                    var userData = await fetchWithJWT("user");
+                    document.getElementById('displayUsername').textContent = userData.username;
+                } catch (error) {
+                    console.error('Error al obtener los datos del usuario:', error);
+                }
+            }
+            function logout() {
+                localStorage.removeItem('jwt');
+                login(true);
+                register(false);
+                document.getElementById('displayUsername').textContent = '';
+            }
             document.addEventListener('DOMContentLoaded', function() {
                 load();
             });
         </script>
        
         <div id="login">
-            <form onsubmit="handleLogin(event)">
+            <form onsubmit="handleLogin(event)" class="border">
+                <h2>Login</h2>
                 <div>
                     <label for="username">Correo electrónico:</label>
                     <input type="text" id="username" name="username" required>
@@ -266,7 +265,8 @@
             </form>
         </div>
         <div id="register">
-            <form onsubmit="handleRegister(event)">
+            <form onsubmit="handleRegister(event)" class="border">
+                <h2>Register</h2>
                 <div>
                     <label for="reg_username">Nombre de usuario:</label>
                     <input type="text" id="reg_username" name="username" required>
@@ -291,9 +291,11 @@
                 </div>
             </form>
         </div>
-        <h1>Documentación</h1>
-        <p>Turorial de creación del proyecto: <a href="https://www.youtube.com/watch?v=r_CGbP9kYbc">[Enlace]</a></p>
-        <p>Comando crear imagen docker: docker build -t api-1.0-snapshot .</p>
-        <p></p>
+        <div class="container border">
+            <ul class="inline-list">
+                <li id="displayUsername"></li>
+                <li><a onclick="logout()">Cerrar sesión</a></li>
+            </ul>
+        </div>
     </body>
 </html>

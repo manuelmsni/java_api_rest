@@ -36,7 +36,7 @@ public class UserEndpoint {
         
         User user = JWTManager.getUserFromToken(authToken);
         
-        return Response.ok(user.getUsername()).build();
+        return Response.ok("{\"username\":\"" + user.getUsername() + "\"}").build();
         
     }
 

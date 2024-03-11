@@ -38,12 +38,12 @@ public class LoginEndpoint {
             User user = userDAO.findByEmailOrUsernameAndPassword(credentials.getEmail(), password);
             if (user != null) {
                 String token = JWTManager.generateToken(user);
-                return Response.ok("{\"token\":\"" + token + "\"}").build();
+                return Response.ok("{\"jwt\":\"" + token + "\"}").build();
             } else {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("{\"error\":\"Credenciales inválidas\"}").build();
             }
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("{\"error\":\"Error al procesar la solicitud\"}").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("{\"error\":\"" + e.getMessage() + "\"}").build();
         }
     }
 
