@@ -9,6 +9,8 @@ import com.mycompany.api.annotation.NoSessionRequired;
 import com.mycompany.api.dao.post.PostDAO;
 import com.mycompany.api.dao.post.PostMongodbDAO;
 import com.mycompany.api.model.Post;
+import com.mycompany.api.util.JWTManager;
+import java.util.ArrayList;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -53,12 +55,25 @@ public class PostEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createPost(PostAdapter post) {
+    public Response createPost(@HeaderParam("Authorization") String authToken, PostAdapter post) {
         try {
+            
+            if (post.getContent() == null) {
+                return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"El contenido del post es requerido\"}").build();
+            }
+            if (post.getImageUrls() == null) {
+                post.setImageUrls(new ArrayList<>());
+            }
+            
+            int userId = JWTManager.getUserFromToken(authToken).getId();
+            
+            // Asignar el userId al post antes de insertarlo
+            post.setUserId(userId); // Asegúrate de que PostAdapter tiene un método para establecer el userId
+            
             postDAO.insertPost(post);
             return Response.status(Response.Status.CREATED).entity(post).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("{\"error\":\"Error al crear el post\"}").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("{\"error\":\"Error al crear el post: " + e.getMessage() + "\"}").build();
         }
     }
 

@@ -12,6 +12,8 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -113,6 +115,35 @@ public class UserHibernateDAO implements UserDAO{
         } catch (Exception e) {
             em.getTransaction().rollback();
             e.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
+    
+    @Override
+    public User findByUsername(String username) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+                     .setParameter("username", username)
+                     .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+    
+    @Override
+    public List<User> findUsersByUsernameLike(String username){
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.username LIKE :usernamePattern", User.class);
+            query.setParameter("usernamePattern", "%" + username + "%");
+            return query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>(); 
         } finally {
             em.close();
         }

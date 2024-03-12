@@ -28,6 +28,7 @@ public class ApplicationSetup extends Application {
         resources.add(com.mycompany.api.endpoint.RegisterEndpoint.class);
         resources.add(com.mycompany.api.endpoint.SessionEndpoint.class);
         resources.add(com.mycompany.api.endpoint.UserEndpoint.class);
+        resources.add(com.mycompany.api.endpoint.UsersEndpoint.class);
         resources.add(com.mycompany.api.middleware.SessionMiddleware.class);
     }
     

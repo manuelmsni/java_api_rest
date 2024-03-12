@@ -33,4 +33,6 @@ public interface PostDAO {
      */
     public void insertPost(PostAdapter post);
     
+    public List<Post> getPostsByUserId(int userId);
+    
 }

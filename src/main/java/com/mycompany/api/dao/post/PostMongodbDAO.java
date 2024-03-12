@@ -5,9 +5,11 @@
 package com.mycompany.api.dao.post;
 
 import com.mongodb.client.MongoCollection;
+import static com.mongodb.client.model.Filters.eq;
 import com.mycompany.api.adapter.PostAdapter;
 import com.mycompany.api.model.Post;
 import com.mycompany.api.persistence.MongodbPojoPersistence;
+import java.util.ArrayList;
 import java.util.List;
 import org.bson.types.ObjectId;
 
@@ -43,6 +45,11 @@ public class PostMongodbDAO implements PostDAO {
     @Override
     public void insertPost(PostAdapter post) {
         MongodbPojoPersistence.getInstance().insert(collection, post);
+    }
+    
+    @Override
+    public List<Post> getPostsByUserId(int userId) {
+        return collection.find(eq("userId", userId)).into(new ArrayList<>());
     }
     
 }

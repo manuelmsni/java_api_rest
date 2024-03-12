@@ -4,6 +4,7 @@
  */
 package com.mycompany.api.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.bson.types.ObjectId;
 
@@ -20,7 +21,8 @@ public class Post {
     private List<Comment> comentarios; // Comentarios del post
     
     public Post(){
-        
+        imageUrls = new ArrayList<>();
+        comentarios = new ArrayList<>();
     }
 
     public ObjectId getId() {

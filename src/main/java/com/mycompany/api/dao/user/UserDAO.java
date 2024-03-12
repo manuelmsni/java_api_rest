@@ -5,6 +5,7 @@
 package com.mycompany.api.dao.user;
 
 import com.mycompany.api.model.User;
+import java.util.List;
 
 /**
  *
@@ -18,11 +19,15 @@ public interface UserDAO {
      */
     public User getUser(int id);
     
-    public User findByEmailOrUsernameAndPassword(String email, String password);
-    
-    public User findByEmail(String email);
-    
     public void insertUser(User user);
 
     public void updateUser(User user);
+    
+    public User findByEmailOrUsernameAndPassword(String email, String password);
+    
+    public User findByUsername(String username);
+    
+    public User findByEmail(String email);
+
+    public List<User> findUsersByUsernameLike(String username);
 }

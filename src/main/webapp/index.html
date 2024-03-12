@@ -3,6 +3,7 @@
     <head>
         <title>/api-1.0-SNAPSHOT</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="https://manuelmsni.github.io/IMAGG/css/IMAGG_default.css">
         <style type="text/css">
             :root{
                 --main-width: 1100px;
@@ -11,7 +12,7 @@
                 margin: 0;
                 font-family: system-ui;
             }
-            h1, h2 {
+            h1, h2 , h3{
                 margin: 0;
             }
             a{
@@ -21,6 +22,10 @@
             a:hover {
                 cursor: pointer;
                 color: darkcyan;
+            }
+            textarea {
+                width: -webkit-fill-available;
+                resize: none;
             }
             #login, #register {
                 display: none;
@@ -47,8 +52,29 @@
                 display: flex;
                 flex-direction: column;
             }
+            #post-images {
+                display: flex;
+                flex-direction: column;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                row-gap: 0.5rem;
+                column-gap: 0.5rem;
+            }
             #login button, #register button {
                 margin-top: 0.5rem;
+            }
+            #top{
+                height: 85px;
+                overflow: visible;
+            }
+            #results{
+                display: none;
+                z-index: 999;
+                position: absolute;
+            }
+            #results:hover{
+                display: block;
             }
             .border{
                 box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
@@ -59,8 +85,13 @@
                 margin: auto;
                 margin-top: 1rem;
                 margin-bottom: 1rem;
+                padding: 1rem;
                 box-sizing: border-box;
                 overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                row-gap: 0.5rem;
+                background-color: white;
             }
             .inline-list {
                 list-style: none;
@@ -68,45 +99,115 @@
             .inline-list li{
                 display: inline;
             }
+            .align-right {
+                display: flex;
+                justify-content: flex-end;
+            }
+            .br {
+                border-radius: 15px 
+            }
+            .user-search-div{
+                cursor: pointer;
+            }
+            .line-split{
+                display: flex;
+                flex-direction: row;
+                row-gap: 0.5rem;
+                justify-content: space-between;
+            }
             @media screen and (max-width: calc(1100px + 2rem)) {
                 .container{
                     margin-left: 1rem;
                     margin-right: 1rem;
                 }
             }
+        </style>
+        
+        
+        <style>
+            .post-images{
+                display: flex;
+                flex-wrap: wrap;
+                flex-direction: row;
+                column-gap: 0.5rem;
+                row-gap: 0.5rem;
+            }
+            .post-img{
+                height: 100px;
+            }
+            .post-image {
+                position: relative;
+                display: inline-block;
+                overflow: hidden;
+                cursor: pointer;
+                width: 100px;
+                aspect-ratio: 1/1;
+                background-color: #363636;
+            }
+
+            .post-image img {
+                transition: transform 0.5s ease, opacity 0.5s ease;
+                display: block;
+                height: 100%;
+            }
+
+            /* Capa de oscurecimiento */
+            .post-image::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0); /* Transparente inicialmente */
+                transition: background 0.5s ease;
+            }
+
+            /* Cruz de esquina a esquina */
+            .post-image::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 2px;
+                background: white; /* Color de la cruz */
+                transform: translate(-50%, -50%) rotate(45deg);
+                transition: width 0.5s ease;
+            }
             
+            .ct{
+                text-align: center;
+            }
+
+            .post-image:hover::before {
+                background: rgba(0, 0, 0, 0.5); /* Oscurecimiento al hacer hover */
+            }
+
+            .post-image:hover::after {
+                width: calc(100% * 1.414); /* Ancho de la cruz, ajustado por sqrt(2) para cubrir diagonalmente */
+            }
         </style>
     </head>
     <body>
         <script>
             var baseURL = "http://localhost:6003/api-1.0-SNAPSHOT/api/";
-            async function handleLogin(event) {
-                event.preventDefault();
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                const data = {email: username, password: password};
+            
+            async function baseFetch(endpoint, options) {
+                var url = baseURL + endpoint;
                 try {
-                    const response = await fetch(baseURL + 'login', {
-                        method: 'POST', // Método HTTP
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data),
-                    });
+                    const response = await fetch(url, options);
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    const {jwt} = await response.json();
-                    console.log('JWT recibido:', jwt);
-                    localStorage.setItem('jwt', jwt);
-                    getUserData();
-                    login(false);
+                    return await response.json();
                 } catch (error) {
                     console.error('Error al realizar la solicitud:', error);
+                    throw error;
                 }
             }
+            
             async function fetchWithJWT(endpoint, method = 'GET', body = null) {
-                var url = baseURL + endpoint;
                 const jwt = localStorage.getItem('jwt');
                 if (!jwt) {
                     login(true);
@@ -122,19 +223,10 @@
                 if (body && method !== 'GET') {
                     options.body = JSON.stringify(body);
                 }
-                try {
-                    const response = await fetch(url, options);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return await response.json();
-                } catch (error) {
-                    console.error('Error al realizar la solicitud:', error);
-                    throw error;
-                }
+                return baseFetch(endpoint, options);
             }
+            
             async function fetchWithoutJWT(endpoint, method = 'GET', body = null) {
-                var url = baseURL + endpoint;
                 const options = {
                     method: method,
                     headers: {
@@ -144,17 +236,25 @@
                 if (body && method !== 'GET') {
                     options.body = JSON.stringify(body);
                 }
+                return baseFetch(endpoint, options);
+            }
+            
+            async function handleLogin(event) {
+                event.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const data = {email: username, password: password};
                 try {
-                    const response = await fetch(url, options);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return await response.json();
+                    const {jwt} = await fetchWithoutJWT('login', 'POST', data);
+                    console.log('JWT recibido:', jwt);
+                    localStorage.setItem('jwt', jwt);
+                    getUserData();
+                    login(false);
                 } catch (error) {
                     console.error('Error al realizar la solicitud:', error);
-                    throw error;
                 }
             }
+            
             async function handleRegister(event) {
                 event.preventDefault(); 
                 const username = document.getElementById('reg_username').value;
@@ -167,17 +267,7 @@
                 }
                 const data = {username: username, email: email, password: password};
                 try {
-                    const response = await fetch(baseURL + 'register', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json', 
-                        },
-                        body: JSON.stringify(data),
-                    });
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const responseData = await response.json();
+                    const responseData = await fetchWithoutJWT('register', 'POST', data);
                     console.log('Registro exitoso:', responseData);
                     login(true);
                     register(false);
@@ -186,6 +276,39 @@
                     alert('Error en el registro. Por favor, intenta de nuevo.');
                 }
             }
+            
+            async function load() {
+                const jwt = localStorage.getItem('jwt');
+                if (!jwt) {
+                    login(true);
+                } else {
+                    try {
+                        await fetchWithJWT('session');
+                        getUserData();
+                        login(false);
+                    } catch (error) {
+                        console.error('Error al verificar el token:', error);
+                        login(true);
+                    }
+                }
+            }
+
+            async function getUserData() {
+                try {
+                    var userData = await fetchWithJWT("user");
+                    document.getElementById('displayUsername').textContent = userData.username;
+                } catch (error) {
+                    console.error('Error al obtener los datos del usuario:', error);
+                }
+            }
+
+            function logout() {
+                localStorage.removeItem('jwt');
+                login(true);
+                register(false);
+                document.getElementById('displayUsername').textContent = '';
+            }
+
             function register(bool){
                 if(bool){
                     document.getElementById('register').style.display = 'flex';
@@ -195,6 +318,7 @@
                     document.getElementById('repeat_password').value = "";
                 }
             }
+
             function login(bool){
                 if(bool){
                     document.getElementById('login').style.display = 'flex';
@@ -203,43 +327,105 @@
                     document.getElementById('password').value = "";
                 }
             }
-            async function load() {
-                const jwt = localStorage.getItem('jwt');
-                if (!jwt) {
-                    login(true);
-                } else {
+            
+            async function post(event) {
+                event.preventDefault(); // Prevenir la recarga de la página
+                var postContent = document.getElementById('post-textarea').value;
+
+                // Recuperar todos los contenedores de imágenes
+                var imageWrappers = document.querySelectorAll('.post-image');
+                var imageUrls = Array.from(imageWrappers).map(wrapper => {
+                    // Acceder al primer elemento 'img' dentro de cada 'wrapper'
+                    return wrapper.querySelector('img').src;
+                });
+
+                var data = {
+                    content: postContent,
+                    imageUrls: imageUrls // Asegúrate de que el nombre del campo aquí coincida exactamente con lo que el servidor espera
+                };
+
+                try {
+                    var response = await fetchWithJWT('post', 'POST', data);
+                    console.log('Respuesta del servidor:', response);
+                    document.getElementById('post-textarea').value = ''; // Limpiar el área de texto
+                    document.getElementById('post-images').innerHTML = ''; // Limpiar las imágenes
+                } catch (error) {
+                    console.error('Error al enviar el post:', error);
+                }
+            }
+            
+            async function busca() {
+                var searchValue = document.getElementById('search').value.trim();
+                var resultsContainer = document.getElementById('results');
+
+                resultsContainer.innerHTML = '';
+
+                if(searchValue !== '') {
                     try {
-                        const response = await fetch(baseURL + 'session', {
-                            method: 'GET',
-                            headers: {
-                                'Authorization': `Bearer ${jwt}`,
-                            },
+                        var usersData = await fetchWithJWT(`users/${searchValue}`);
+                        console.log(usersData);
+
+                        usersData.forEach(user => {
+                            var userDiv = document.createElement('div');
+                            userDiv.classList.add('user-search-div');
+                            userDiv.textContent = user.username;
+                            userDiv.addEventListener('click', function() {
+                                searchUser(user.username);
+                            });
+                            resultsContainer.appendChild(userDiv);
                         });
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        getUserData();
-                        login(false);
+
                     } catch (error) {
-                        console.error('Error al verificar el token:', error);
-                        login(true);
+                        console.error('Error al obtener los datos de los usuarios:', error);
                     }
                 }
             }
-            async function getUserData(){
-                try {
-                    var userData = await fetchWithJWT("user");
-                    document.getElementById('displayUsername').textContent = userData.username;
-                } catch (error) {
-                    console.error('Error al obtener los datos del usuario:', error);
+            
+            async function searchUser(username) {
+                if(username !== '') {
+                    try {
+                        var response = await fetchWithJWT(`user/${username}`);
+                        var userData = response.user;
+                        var postsData = response.posts;
+                        console.log(userData);
+                        console.log(postsData);
+
+                        var contentDiv = document.getElementById('content');
+                        contentDiv.innerHTML = '';
+
+                        var userDiv = document.createElement('div');
+                        userDiv.classList.add('container');
+                        userDiv.classList.add('border');
+                        userDiv.classList.add('user-info');
+                        userDiv.innerHTML = `<h4>Usuario: ${userData.username}</h4>`;
+                        contentDiv.appendChild(userDiv);
+                        
+                        if(post.length > 0){
+                            var postsTitle = document.createElement('h3');
+                            postsTitle.classList.add('ct');
+                            postsTitle.innerText = "Posts:";
+
+                            contentDiv.appendChild(postsTitle);
+                            
+                            postsData.forEach(post => {
+                                var postDiv = document.createElement('div');
+                                postDiv.classList.add('container');
+                                postDiv.classList.add('border');
+                                postDiv.classList.add('post');
+                                postDiv.innerHTML = `
+                                    <p>${post.content}</p>
+                                    <div class="post-images">${post.imageUrls.map(url => `<img src="${url}" class="post-img triggerIMAGG">`).join('')}</div>
+                                `;
+                                contentDiv.appendChild(postDiv);
+                            });
+                        }
+                        
+                    } catch (error) {
+                        console.error('Error al obtener los datos del usuario o sus posts:', error);
+                    }
                 }
             }
-            function logout() {
-                localStorage.removeItem('jwt');
-                login(true);
-                register(false);
-                document.getElementById('displayUsername').textContent = '';
-            }
+
             document.addEventListener('DOMContentLoaded', function() {
                 load();
             });
@@ -291,11 +477,73 @@
                 </div>
             </form>
         </div>
-        <div class="container border">
+        <div id="top" class="container border line-split">
             <ul class="inline-list">
                 <li id="displayUsername"></li>
                 <li><a onclick="logout()">Cerrar sesión</a></li>
             </ul>
+            <ul class="inline-list">
+                <li>🔎</li>
+                <li>
+                    <input type="text" id="search">
+                    <div id="results" class="container border"></div>
+                </li>
+            </ul>
+            <script>
+                document.getElementById('search').addEventListener('focus', function() {
+                    document.getElementById('results').style.display = 'block';
+                });
+                document.getElementById('search').addEventListener('blur', function() {
+                    setTimeout(function() {
+                        document.getElementById('results').style.display = 'none';
+                    }, 250); // 250 milisegundos = 0.25 segundos
+                });
+                document.getElementById('search').addEventListener('input', busca);
+            </script>
         </div>
+        
+        <form onsubmit="post(event)" class="container border">
+            <h3>Postea:</h3>
+            <textarea id="post-textarea"></textarea>
+            <div><label for="img_route">URL: </label><input type="text" id="img_route" name="imgRoute"><button id="add-image-button" type="button">Subir imagen</button></div>
+            <div id="post-images"></div>
+            <div class="align-right"><button id="post-button">Postear</button></div>
+        </form>
+        <script>
+            function addImage() {
+                var imgRoute = document.getElementById('img_route').value;
+                if (imgRoute) {
+                    // Crear contenedor div con clase 'post-image'
+                    var wrapper = document.createElement('div');
+                    wrapper.classList.add('post-image');
+                    wrapper.classList.add('br');
+                    wrapper.title = "Quitar imagen";
+
+                    // Crear elemento de imagen
+                    var img = document.createElement('img');
+                    img.src = imgRoute;
+                    img.alt = "Descripción dinámica de la imagen"; // Considera añadir una descripción adecuada aquí
+
+                    // Añadir img a wrapper
+                    wrapper.appendChild(img);
+
+                    // Añadir evento de clic al wrapper para eliminar la imagen
+                    wrapper.addEventListener('click', function() {
+                        this.parentNode.removeChild(this);
+                    });
+
+                    // Añadir wrapper al div de imágenes
+                    document.getElementById('post-images').appendChild(wrapper);
+
+                    // Limpiar el campo de entrada de la URL de la imagen
+                    document.getElementById('img_route').value = '';
+                }
+            }
+            document.getElementById('add-image-button').addEventListener('click', addImage);
+        </script>
+        <div id="content">
+            
+        </div>
+        <script src="https://manuelmsni.github.io/IMAGG/IMAGG_1.0/js/IMAGG.js"></script>
     </body>
 </html>
