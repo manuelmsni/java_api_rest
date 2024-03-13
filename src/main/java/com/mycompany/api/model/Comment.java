@@ -7,7 +7,11 @@ package com.mycompany.api.model;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Representa un comentario realizado por un usuario en un post.
+ * Cada comentario tiene asociado un ID único, el ID del usuario que lo realiza,
+ * el contenido del comentario, el ID del post al cual está asociado, y opcionalmente,
+ * un ID de respuesta si el comentario es una respuesta a otro comentario.
+ * 
  * @author manuelmsni
  */
 public class Comment {

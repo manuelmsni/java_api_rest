@@ -16,7 +16,9 @@ import javax.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Endpoint para manejar las operaciones de los posts dentro de la aplicación.
+ * Permite la creación, recuperación y gestión de posts por parte de los usuarios.
+ * 
  * @author manuelmsni
  */
 @Path("post")
@@ -24,6 +26,11 @@ public class PostEndpoint {
 
     private final PostDAO postDAO = PostMongodbDAO.getInstance();
 
+    /**
+     * Recupera todos los posts existentes en la base de datos.
+     * 
+     * @return Una respuesta HTTP conteniendo una lista de todos los posts.
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @NoSessionRequired
@@ -35,6 +42,12 @@ public class PostEndpoint {
         }
     }
 
+    /**
+     * Recupera un post específico por su ID.
+     *
+     * @param id El ID del post a recuperar.
+     * @return Una respuesta HTTP con el post solicitado; o una respuesta de error si el post no existe.
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -51,6 +64,13 @@ public class PostEndpoint {
         }
     }
 
+    /**
+     * Crea un nuevo post en la base de datos.
+     *
+     * @param authToken El token JWT proporcionado en el encabezado de autorización para identificar al usuario.
+     * @param post El post a crear, proporcionado en el cuerpo de la solicitud.
+     * @return Una respuesta HTTP indicando éxito y conteniendo el post creado; o una respuesta de error en caso de falla.
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

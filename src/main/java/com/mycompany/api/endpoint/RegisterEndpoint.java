@@ -18,7 +18,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- *
+ * Endpoint para registrar nuevos usuarios en la aplicación.
+ * Provee la funcionalidad para que los usuarios se puedan registrar proporcionando
+ * su información básica como el nombre de usuario, correo electrónico y contraseña.
+ * 
  * @author manuelmsni
  */
 @Path("register")
@@ -26,6 +29,14 @@ public class RegisterEndpoint {
 
     private UserDAO userDAO = UserHibernateDAO.getInstance();
 
+    /**
+     * Permite a un nuevo usuario registrarse en la aplicación. La contraseña del usuario
+     * se hashea antes de almacenarla en la base de datos para garantizar la seguridad.
+     * 
+     * @param user Un objeto {@link User} conteniendo la información del usuario a registrar.
+     * @return Una respuesta HTTP indicando éxito y un mensaje de confirmación; o una respuesta de error
+     * si el registro no se puede completar, por ejemplo, si el correo electrónico ya está en uso.
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

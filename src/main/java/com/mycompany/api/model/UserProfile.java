@@ -7,7 +7,10 @@ package com.mycompany.api.model;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Representa el perfil de un usuario. 
+ * Incluye información adicional sobre el usuario, como una descripción y una imagen de perfil.
+ * Cada perfil está asociado a un usuario específico mediante un ID de usuario.
+ * 
  * @author manuelmsni
  */
 public class UserProfile {

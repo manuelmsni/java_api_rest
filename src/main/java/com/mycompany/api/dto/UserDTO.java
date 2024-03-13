@@ -5,7 +5,10 @@
 package com.mycompany.api.dto;
 
 /**
- *
+ * Data Transfer Object (DTO) para la entidad Usuario. Este DTO encapsula la información
+ * del usuario que se transfiere entre el cliente y el servidor en las operaciones de la API,
+ * optimizando la cantidad de datos enviados al incluir solo los campos necesarios.
+ * 
  * @author manuelmsni
  */
 public class UserDTO {

@@ -16,25 +16,35 @@ import org.bson.types.ObjectId;
  * @author manuelmsni
  */
 public interface PostDAO {
+    
     /**
-     * Devuelve la lista de todos los posts
-     * @return La lista de posts
+     * Recupera la lista de todos los posts existentes.
+     *
+     * @return una lista de todos los posts
      */
     public List<Post> getAllPosts();
     
     /**
-     * Devuelve un post por su ObjectId
-     * @param id El ObjectId de post
-     * @return El post con dicha id
+     * Recupera un post específico por su ID.
+     *
+     * @param id el ID del post a recuperar
+     * @return el post correspondiente al ID proporcionado
      */
     public Post getPost(ObjectId id);
     
     /**
-     * 
-     * @param post 
+     * Inserta un nuevo post en la base de datos.
+     *
+     * @param post el post a insertar
      */
     public void insertPost(Post post);
     
+    /**
+     * Recupera una lista de posts realizados por un usuario específico.
+     *
+     * @param userId el ID del usuario cuyos posts se desean recuperar
+     * @return una lista de posts del usuario especificado
+     */
     public List<Post> getPostsByUserId(int userId);
     
 }

@@ -11,7 +11,11 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Clase encargada de gestionar las operaciones de acceso a datos para los posts en una base de datos MongoDB.
+ * Provee métodos para realizar operaciones CRUD sobre los documentos de posts, incluyendo la inserción,
+ * actualización, eliminación y consulta de posts. Utiliza el patrón Singleton para asegurar una única instancia
+ * de la clase durante la ejecución de la aplicación.
+ * 
  * @author manuelmsni
  */
 public class PostMongodbDAO implements PostDAO {

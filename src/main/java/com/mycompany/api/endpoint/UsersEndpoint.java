@@ -18,7 +18,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
- * REST Web Service
+ * Endpoint para la búsqueda y recuperación de usuarios en la aplicación.
+ * Permite realizar búsquedas de usuarios basadas en su nombre de usuario.
  *
  * @author manuelmsni
  */
@@ -27,6 +28,15 @@ public class UsersEndpoint {
 
     private UserDAO userDAO = UserHibernateDAO.getInstance();
 
+    /**
+     * Busca usuarios cuyo nombre de usuario contenga el texto proporcionado.
+     * Esta búsqueda es insensible a mayúsculas y minúsculas y permite la recuperación
+     * de una lista de usuarios que coincidan con el criterio de búsqueda.
+     *
+     * @param username El texto de búsqueda utilizado para encontrar usuarios por nombre de usuario.
+     * @return Una respuesta HTTP que contiene una lista de usuarios que coinciden con el criterio de búsqueda,
+     *         o una respuesta indicando que no se encontraron coincidencias.
+     */
     @GET
     @Path("/{username}")
     @Produces(MediaType.APPLICATION_JSON)

@@ -11,12 +11,25 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 /**
- *
+ * Endpoint para la verificación de la validez de la sesión de usuario.
+ * Provee una operación para verificar si el token JWT incluido en las solicitudes
+ * es válido y aún no ha expirado, lo cual es crucial para mantener la seguridad
+ * y la integridad de la sesión del usuario.
+ * 
  * @author manuelmsni
  */
 @Path("session")
 public class SessionEndpoint {
 
+    /**
+     * Verifica la validez del token JWT proporcionado en el encabezado de autorización
+     * de una solicitud HTTP. Esta verificación es esencial para las operaciones que requieren
+     * que el usuario esté autenticado.
+     *
+     * @param authToken El token JWT proporcionado en el encabezado de autorización.
+     * @return Una respuesta HTTP con un mensaje indicando si la sesión es válida o no.
+     *         Retorna un estado de autorización fallida si el token es inválido o ha expirado.
+     */
     @GET
     public Response verifySession(@HeaderParam("Authorization") String authToken) {
         if (authToken == null || !authToken.startsWith("Bearer ")) {

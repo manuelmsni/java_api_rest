@@ -19,7 +19,9 @@ import com.mycompany.api.annotation.NoSessionRequired;
 import com.mycompany.api.util.Hasher;
 
 /**
- * REST Web Service
+ * Endpoint para manejar la autenticación de usuarios en la aplicación.
+ * Provee una operación para que los usuarios puedan iniciar sesión
+ * mediante el envío de sus credenciales.
  *
  * @author manuelmsni
  */
@@ -28,6 +30,15 @@ public class LoginEndpoint {
 
     private UserDAO userDAO = UserHibernateDAO.getInstance();
 
+    /**
+     * Permite a un usuario iniciar sesión en la aplicación. Verifica las credenciales
+     * proporcionadas y, si son válidas, retorna un JWT para ser utilizado en
+     * solicitudes subsiguientes que requieran autenticación.
+     *
+     * @param credentials Objeto {@link User} que contiene el nombre de usuario o email y la contraseña.
+     * @return Una respuesta HTTP con un JWT en el cuerpo si la autenticación es exitosa;
+     *         de lo contrario, una respuesta indicando credenciales inválidas o un error interno.
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

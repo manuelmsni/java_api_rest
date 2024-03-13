@@ -9,7 +9,11 @@ import com.mycompany.api.model.UserProfile;
 import com.mycompany.api.persistence.MongodbPojoPersistence;
 
 /**
- *
+ * Clase encargada de gestionar las operaciones de acceso a datos para los perfiles de usuario en una base de datos MongoDB.
+ * Ofrece métodos para la inserción, actualización y consulta de perfiles de usuario, permitiendo la manipulación de la
+ * información de perfil asociada a cada usuario. Implementa el patrón Singleton para asegurar una única instancia de la
+ * clase a lo largo de la ejecución de la aplicación, facilitando así la gestión centralizada de los perfiles de usuario.
+ * 
  * @author manuelmsni
  */
 public class UserProfileMongoDAO implements UserProfileDAO {

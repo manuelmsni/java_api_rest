@@ -9,7 +9,11 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Representa un post creado por un usuario. 
+ * Un post puede incluir contenido textual, imágenes, y comentarios asociados.
+ * Cada post tiene un ID único, el ID del usuario que lo crea, y opcionalmente,
+ * un ID de respuesta si el post es una respuesta a otro post.
+ * 
  * @author manuelmsni
  */
 public class Post {

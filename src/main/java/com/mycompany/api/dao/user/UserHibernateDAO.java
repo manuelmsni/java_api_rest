@@ -5,13 +5,8 @@
 package com.mycompany.api.dao.user;
 
 import com.mycompany.api.model.User;
-
-import com.mycompany.api.model.User;
 import com.mycompany.api.persistence.HibernatePersistence;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +14,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Implementación de la interfaz UserDAO utilizando Hibernate para interactuar con una base de datos relacional.
+ * Esta clase se encarga de la gestión de usuarios, proporcionando funcionalidades como la inserción, actualización,
+ * eliminación y consulta de información de usuarios. Utiliza el patrón Singleton para asegurar una única instancia
+ * de la clase durante la ejecución de la aplicación y el framework Hibernate para mapear objetos Java a registros
+ * de base de datos de manera eficiente.
  * 
  * @author manuelmsni
  */
