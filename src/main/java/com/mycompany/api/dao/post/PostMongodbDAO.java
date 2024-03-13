@@ -5,11 +5,8 @@
 package com.mycompany.api.dao.post;
 
 import com.mongodb.client.MongoCollection;
-import static com.mongodb.client.model.Filters.eq;
-import com.mycompany.api.adapter.PostAdapter;
 import com.mycompany.api.model.Post;
 import com.mycompany.api.persistence.MongodbPojoPersistence;
-import java.util.ArrayList;
 import java.util.List;
 import org.bson.types.ObjectId;
 
@@ -21,10 +18,10 @@ public class PostMongodbDAO implements PostDAO {
     
     private static PostMongodbDAO instance;
     
-    private MongoCollection<PostAdapter> collection;
+    private MongoCollection<Post> collection;
 
     private PostMongodbDAO() {
-        this.collection = MongodbPojoPersistence.getCollection("api", "post", PostAdapter.class);
+        this.collection = MongodbPojoPersistence.getCollection("api", "post", Post.class);
     }
     
     public static PostMongodbDAO getInstance(){
@@ -32,24 +29,36 @@ public class PostMongodbDAO implements PostDAO {
         return instance;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public List<PostAdapter> getAllPosts() {
+    public List<Post> getAllPosts() {
         return MongodbPojoPersistence.getInstance().getAll(collection);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Post getPost(ObjectId id) {
-        return MongodbPojoPersistence.getInstance().get(collection, id);
+        return MongodbPojoPersistence.getInstance().findById(collection, id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void insertPost(PostAdapter post) {
+    public void insertPost(Post post) {
         MongodbPojoPersistence.getInstance().insert(collection, post);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Post> getPostsByUserId(int userId) {
-        return collection.find(eq("userId", userId)).into(new ArrayList<>());
+        return MongodbPojoPersistence.getInstance().findManyByField(collection, "userId", userId);
     }
     
 }

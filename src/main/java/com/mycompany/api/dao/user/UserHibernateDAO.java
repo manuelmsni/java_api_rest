@@ -7,6 +7,7 @@ package com.mycompany.api.dao.user;
 import com.mycompany.api.model.User;
 
 import com.mycompany.api.model.User;
+import com.mycompany.api.persistence.HibernatePersistence;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.NoResultException;
@@ -24,22 +25,56 @@ import java.util.logging.Logger;
 public class UserHibernateDAO implements UserDAO{
     
     private static UserHibernateDAO instance;
-    private EntityManagerFactory emf;
+    private HibernatePersistence hp;
 
     private UserHibernateDAO() {
-        emf = Persistence.createEntityManagerFactory("hbpu");
+        hp = new HibernatePersistence("hbpu");
     }
 
     public static UserHibernateDAO getInstance(){
         if(instance == null) instance = new UserHibernateDAO();
         return instance;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void insertUser(User user) {
+        hp.save(user);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public User getUser(int id) {
+        return hp.find(User.class, id);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateUser(User user) {
+        hp.update(user);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteUser(User user) {
+        hp.delete(user);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User findByEmailOrUsernameAndPassword(String emailOrUsername, String password) {
-        EntityManager em = emf.createEntityManager();
         try {
-            TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE (u.email = :emailOrUsername OR u.username = :emailOrUsername) AND u.password = :password", User.class);
+            TypedQuery<User> query = hp.getEntityManager().createQuery("SELECT u FROM User u WHERE (u.email = :emailOrUsername OR u.username = :emailOrUsername) AND u.password = :password", User.class);
             query.setParameter("emailOrUsername", emailOrUsername);
             query.setParameter("password", password);
             return query.getSingleResult();
@@ -48,21 +83,7 @@ public class UserHibernateDAO implements UserDAO{
             // TODO : Gestionar excepción
             return null;
         } finally {
-            em.close();
-        }
-    }
-    
-    @Override
-    public User findByEmail(String email) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);
-            query.setParameter("email", email);
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        } finally {
-            em.close();
+            hp.close();
         }
     }
     
@@ -70,82 +91,48 @@ public class UserHibernateDAO implements UserDAO{
      * {@inheritDoc}
      */
     @Override
-    public User getUser(int id) {
-        EntityManager em = emf.createEntityManager();
+    public User findByEmail(String email) {
         try {
-            return em.find(User.class, id);
+            TypedQuery<User> query = hp.getEntityManager().createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);
+            query.setParameter("email", email);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         } finally {
-            em.close();
+            hp.close();
         }
     }
     
-    @Override
-    public void insertUser(User user) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            em.persist(user);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-            throw e;
-        } finally {
-            em.close();
-        }
-    }
-
-    @Override
-    public void updateUser(User user) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            User existingUser = em.find(User.class, user.getId());
-            if (existingUser == null) {
-                throw new Exception("Usuario no encontrado");
-            }
-            existingUser.setUsername(user.getUsername());
-            existingUser.setEmail(user.getEmail());
-            
-            // Asegúrate de hacer hash de la contraseña antes de llamar a updateUser si decides actualizar la contraseña aquí
-            
-            existingUser.setPassword(user.getPassword());
-
-            em.merge(existingUser);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-            e.printStackTrace();
-        } finally {
-            em.close();
-        }
-    }
-    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User findByUsername(String username) {
-        EntityManager em = emf.createEntityManager();
         try {
-            return em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+            return hp.getEntityManager().createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
                      .setParameter("username", username)
                      .getSingleResult();
         } catch (Exception e) {
             return null;
         } finally {
-            em.close();
+            hp.close();
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<User> findUsersByUsernameLike(String username){
-        EntityManager em = emf.createEntityManager();
         try {
-            TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.username LIKE :usernamePattern", User.class);
+            TypedQuery<User> query = hp.getEntityManager().createQuery("SELECT u FROM User u WHERE u.username LIKE :usernamePattern", User.class);
             query.setParameter("usernamePattern", "%" + username + "%");
             return query.getResultList();
         } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>(); 
         } finally {
-            em.close();
+            hp.close();
         }
     }
     

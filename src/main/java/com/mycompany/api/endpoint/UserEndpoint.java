@@ -5,13 +5,14 @@
 package com.mycompany.api.endpoint;
 
 
-import com.mycompany.api.adapter.PostAdapter;
 import com.mycompany.api.dao.post.PostDAO;
 import com.mycompany.api.dao.post.PostMongodbDAO;
 import com.mycompany.api.dao.user.UserDAO;
 import com.mycompany.api.dao.user.UserHibernateDAO;
+import com.mycompany.api.dto.UserDTO;
 import com.mycompany.api.model.Post;
 import com.mycompany.api.model.User;
+import com.mycompany.api.service.UserService;
 import com.mycompany.api.util.Hasher;
 import com.mycompany.api.util.JWTManager;
 import java.util.HashMap;
@@ -53,15 +54,17 @@ public class UserEndpoint {
     @Path("/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserByUsername(@PathParam("username") String username) {
-        User user = userDAO.findByUsername(username);
-        if (user != null) {
-            List<Post> posts = postDAO.getPostsByUserId(user.getId());
+        UserService userService = new UserService();
+        UserDTO userDTO = userService.findByUsername(username);
+        if (userDTO != null) {
+            List<Post> posts = postDAO.getPostsByUserId(userDTO.getId());
             Map<String, Object> response = new HashMap<>();
-            response.put("user", user);
+            response.put("user", userDTO);
             response.put("posts", posts);
+            
             return Response.ok(response).build();
         } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("{\"error\":\"Usuario no encontrado\"}").build();
+            return Response.status(Response.Status.NOT_FOUND).entity("{\"error\":\"Perfil de usuario no encontrado\"}").build();
         }
     }
 

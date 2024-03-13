@@ -4,7 +4,6 @@
  */
 package com.mycompany.api.endpoint;
 
-import com.mycompany.api.adapter.PostAdapter;
 import com.mycompany.api.annotation.NoSessionRequired;
 import com.mycompany.api.dao.post.PostDAO;
 import com.mycompany.api.dao.post.PostMongodbDAO;
@@ -55,7 +54,7 @@ public class PostEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createPost(@HeaderParam("Authorization") String authToken, PostAdapter post) {
+    public Response createPost(@HeaderParam("Authorization") String authToken, Post post) {
         try {
             
             if (post.getContent() == null) {

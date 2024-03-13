@@ -12,6 +12,7 @@ import java.util.List;
  * @author manuelmsni
  */
 public interface UserDAO {
+    
     /**
      * Devuelve un usuario por su id
      * @param id El id de usuario
@@ -30,4 +31,6 @@ public interface UserDAO {
     public User findByEmail(String email);
 
     public List<User> findUsersByUsernameLike(String username);
+    
+    public void deleteUser(User user);
 }

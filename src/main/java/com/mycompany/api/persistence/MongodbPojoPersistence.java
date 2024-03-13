@@ -84,9 +84,23 @@ public class MongodbPojoPersistence {
     public static <T> void update(MongoCollection<T> collection, ObjectId idToUpdate, T objToUpdate) {
        collection.replaceOne(Filters.eq("_id", idToUpdate), objToUpdate);
     }
-
-    public static <T> T get(MongoCollection<T> collection, ObjectId idToFind) {
-        return collection.find(Filters.eq("_id", idToFind)).first();
+    
+    public static <T> T findById(MongoCollection<T> collection, ObjectId id) {
+        return collection.find(Filters.eq("_id", id)).first();
+    }
+    
+    public static <T> T findOneByField(MongoCollection<T> collection, String fieldName, Object value) {
+        return collection.find(Filters.eq(fieldName, value)).first();
+    }
+    
+    public static <T> List<T> findManyByField(MongoCollection<T> collection, String fieldName, Object value) {
+        List<T> results = new ArrayList<>();
+        collection.find(Filters.eq(fieldName, value)).into(results);
+        return results;
+    }
+    
+    public static <T> List<T> getParentOf(MongoCollection<T> collection, String field, ObjectId idToFind){
+        return collection.find(Filters.eq(field + "._id", idToFind)).into(new ArrayList<>());
     }
     
     public static <T> List<T> findByTwoFields(MongoCollection<T> collection, String field1, Object value1, String field2, Object value2, Class<T> type) {
@@ -121,10 +135,6 @@ public class MongodbPojoPersistence {
                 ),
                 type
         ).into(new ArrayList<>());
-    }
-    
-    public static <T> List<T> getParentsOf(MongoCollection<T> collection, String field, ObjectId idToFind){
-        return collection.find(Filters.eq(field + "._id", idToFind)).into(new ArrayList<>());
     }
     
     public static <T, U> U findNestedById(MongoCollection<T> collection, String fieldName, ObjectId idToFind, Class<U> type) {

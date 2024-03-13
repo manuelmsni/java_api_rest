@@ -4,7 +4,6 @@
  */
 package com.mycompany.api.dao.post;
 
-import com.mycompany.api.adapter.PostAdapter;
 import com.mycompany.api.model.Post;
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -18,7 +17,7 @@ public interface PostDAO {
      * Devuelve la lista de todos los posts
      * @return La lista de posts
      */
-    public List<PostAdapter> getAllPosts();
+    public List<Post> getAllPosts();
     
     /**
      * Devuelve un post por su ObjectId
@@ -31,7 +30,7 @@ public interface PostDAO {
      * 
      * @param post 
      */
-    public void insertPost(PostAdapter post);
+    public void insertPost(Post post);
     
     public List<Post> getPostsByUserId(int userId);
     
