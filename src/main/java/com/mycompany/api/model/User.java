@@ -12,7 +12,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 /**
- *
+ * Modelo que representa a un usuario dentro de la aplicación. Incluye información básica
+ * como nombre de usuario, correo electrónico y contraseña. Anotado para su uso con JPA,
+ * facilita la persistencia en bases de datos relacionales.
+ * 
  * @author manuelmsni
  */
 @Entity

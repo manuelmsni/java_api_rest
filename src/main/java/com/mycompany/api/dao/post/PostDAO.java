@@ -9,7 +9,10 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Interface para el acceso a datos de los posts. Proporciona métodos para la gestión
+ * de posts en la base de datos, incluyendo operaciones de recuperación, inserción,
+ * y recuperación de posts basados en el ID de usuario.
+ * 
  * @author manuelmsni
  */
 public interface PostDAO {

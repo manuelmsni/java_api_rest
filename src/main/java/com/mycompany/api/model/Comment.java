@@ -18,7 +18,6 @@ public class Comment {
     private ObjectId responseTo; // Autorreferencia a otro Comentario
     
     public Comment(){
-        
     }
 
     public ObjectId getId() {

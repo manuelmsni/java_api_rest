@@ -10,7 +10,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *
+ * Anotación que indica que un método o clase no requiere verificación de sesión para ser accedido.
+ * Se puede aplicar a nivel de clase o método en servicios REST para especificar puntos de acceso
+ * que están disponibles sin necesidad de autenticación.
+ * 
  * @author manuelmsni
  */
 @Retention(RetentionPolicy.RUNTIME)
